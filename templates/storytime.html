@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Maker for Kids</title>
+    <link rel="stylesheet" href="../static/css/storytime.css">
+</head>
+<body>
+    <header>
+        <h1>Story Maker for Kids</h1>
+    </header>
+
+    <main>
+        <form action="/storytime" method="POST">
+            <label for="keywords">Enter some fun keywords to create your story:</label>
+            <input type="text" name="keywords" id="keywords" placeholder="E.g. dragon, princess, forest" required>
+            <button type="submit">Create Story</button>
+        </form>
+        
+       
+        {% if story %}
+            <div class="story" id="storyOutput">
+                <h1>Your Generated Story</h1>
+                <p>{{ story }}</p>
+            </div>
+        {% endif %}
+    </main>
+
+
+
+
+    <footer>
+        <p>Let your imagination soar! ✨</p>
+    </footer>
+
+    <script>
+        function generateStory() {
+            const keywords = document.getElementById('keywords').value;
+            const storyOutput = document.getElementById('storyOutput');
+
+            // Simple story generation using the keywords (you can expand this logic)
+            const story = `Once upon a time, there was a magical place where ${keywords} lived. One day, they set off on an adventure to discover the most amazing secrets in the world.`;
+
+            storyOutput.innerHTML = story;
+        }
+    </script>
+</body>
+</html>

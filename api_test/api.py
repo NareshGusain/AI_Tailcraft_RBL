@@ -25,5 +25,3 @@ def gen_story(keywords):
     )
     return chat_completion.choices[0].message.content
 
-print(gen_story("Animal, superman, batman, cars, moon, sun"))
-
