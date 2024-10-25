@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Player with Synchronized Captions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        #audio-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        #audio-player {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        #caption-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 60px;
+            font-size: 24px;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .word {
+            display: inline-block;
+            margin: 0 4px;
+            color: #bebebe;
+            transition: all 0.2s ease;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .word.prev, .word.next {
+            color: #313131;
+            /* background-color: #f5f5f5; */
+        }
+        .word.active {
+            color: #000;
+            /* font-weight: bold; */
+            /* background-color: #fff3d4; */
+        }
+    </style>
+</head>
+<body>
+    <div id="audio-container">
+        <audio id="audio-player" controls>
+            <source src="../static/story/{{story_uuid}}.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    <div id="caption-container"></div>
+
+    <script>
+        let words = [];
+        const audioPlayer = document.getElementById('audio-player');
+        const captionContainer = document.getElementById('caption-container');
+
+        // Process character-level data into word-level data
+        function processCaptionData(data) {
+            let processedWords = [];
+            let currentWord = {
+                text: '',
+                startTime: data.character_start_times_seconds[0],
+                endTime: null
+            };
+
+            for (let i = 0; i < data.characters.length; i++) {
+                const char = data.characters[i];
+                
+                if (char === ' ' || char === '\n') {
+                    if (currentWord.text) {
+                        currentWord.endTime = data.character_end_times_seconds[i];
+                        processedWords.push({...currentWord});
+                        currentWord = {
+                            text: '',
+                            startTime: data.character_start_times_seconds[i + 1],
+                            endTime: null
+                        };
+                    }
+                    // Add line break for newline characters
+                    if (char === '\n') {
+                        processedWords.push({
+                            text: '\n',
+                            startTime: data.character_start_times_seconds[i],
+                            endTime: data.character_end_times_seconds[i]
+                        });
+                    }
+                } else {
+                    currentWord.text += char;
+                }
+            }
+
+            // Add the last word if it exists
+            if (currentWord.text) {
+                currentWord.endTime = data.character_end_times_seconds[data.characters.length - 1];
+                processedWords.push(currentWord);
+            }
+
+            return processedWords;
+        }
+
+        // Create caption elements
+        function createCaptions(words) {
+            captionContainer.innerHTML = ''; // Clear existing captions
+            words.forEach((word, index) => {
+                if (word.text === '\n') {
+                    captionContainer.appendChild(document.createElement('br'));
+                } else {
+                    const wordSpan = document.createElement('span');
+                    wordSpan.className = 'word';
+                    wordSpan.textContent = word.text;
+                    wordSpan.dataset.index = index;
+                    captionContainer.appendChild(wordSpan);
+                }
+            });
+        }
+
+        // Update captions based on audio time
+        function updateCaptions(currentTime) {
+            const wordElements = Array.from(document.getElementsByClassName('word'));
+            
+            // First, remove all special classes
+            wordElements.forEach(element => {
+                element.classList.remove('active', 'prev', 'next');
+            });
+
+            // Find the current active word index
+            let activeIndex = -1;
+            words.forEach((word, index) => {
+                if (currentTime >= word.startTime && currentTime <= word.endTime) {
+                    activeIndex = index;
+                }
+            });
+
+            if (activeIndex !== -1) {
+                // Get real indices in the DOM (accounting for line breaks)
+                const domIndices = wordElements.map(el => parseInt(el.dataset.index));
+                const activeDomIndex = domIndices.indexOf(activeIndex);
+
+                if (activeDomIndex !== -1) {
+                    // Add active class to current word
+                    wordElements[activeDomIndex].classList.add('active');
+
+                    // Add prev class to previous word if it exists
+                    // if (activeDomIndex > 0) {
+                    //     wordElements[activeDomIndex - 1].classList.add('prev');
+                    // }
+
+                    // Add next class to next word if it exists
+                    // if (activeDomIndex < wordElements.length - 1) {
+                    //     wordElements[activeDomIndex + 1].classList.add('next');
+                    // }
+
+                    // Scroll the active word into view with a smooth behavior
+                    wordElements[activeDomIndex].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+            }
+        }
+
+        // Load JSON data and initialize captions
+        async function initializeCaptions() {
+            try {
+                const response = await fetch('../static/story/{{story_uuid}}.json');
+                const jsonData = await response.json();
+                words = processCaptionData(jsonData);
+                createCaptions(words);
+            } catch (error) {
+                console.error('Error loading JSON file:', error);
+                captionContainer.textContent = 'Error loading captions.';
+            }
+        }
+
+        // Update captions during audio playback
+        audioPlayer.addEventListener('timeupdate', () => {
+            updateCaptions(audioPlayer.currentTime);
+        });
+
+        // Initialize captions when the page loads
+        initializeCaptions();
+    </script>
+</body>
+</html>

@@ -12,38 +12,18 @@
     </header>
 
     <main>
-        <form action="/storytime" method="POST">
+        <form action="/create_story" method="POST">
             <label for="keywords">Enter some fun keywords to create your story:</label>
-            <input type="text" name="keywords" id="keywords" placeholder="E.g. dragon, princess, forest" required>
+            <input type="text" name="age" id="age" placeholder="Enter your Age, E.g. 10 years or teenager." >
+            <input type="text" name="characters" id="characters" placeholder="Enter your Characters, E.g. Spiderman or Farm-Animals." >
+            <input type="text" name="scientific_concept" id="keywoscientific_conceptrds" placeholder="Enter scientific_concept, E.g. gravity or Newton laws." >
+
             <button type="submit">Create Story</button>
         </form>
-        
-       
-        {% if story %}
-            <div class="story" id="storyOutput">
-                <h1>Your Generated Story</h1>
-                <p>{{ story }}</p>
-            </div>
-        {% endif %}
     </main>
-
-
-
 
     <footer>
         <p>Let your imagination soar! ✨</p>
     </footer>
-
-    <script>
-        function generateStory() {
-            const keywords = document.getElementById('keywords').value;
-            const storyOutput = document.getElementById('storyOutput');
-
-            // Simple story generation using the keywords (you can expand this logic)
-            const story = `Once upon a time, there was a magical place where ${keywords} lived. One day, they set off on an adventure to discover the most amazing secrets in the world.`;
-
-            storyOutput.innerHTML = story;
-        }
-    </script>
 </body>
 </html>
