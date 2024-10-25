@@ -2,9 +2,7 @@ from dotenv import load_dotenv, dotenv_values
 import os
 from groq import Groq
 
-
 load_dotenv()
-
 
 def gen_story(keywords):
     client = Groq(
