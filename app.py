@@ -3,8 +3,6 @@ from api_test import api
 
 app = Flask(__name__)
 
-
-
 @app.route('/')
 @app.route('/index.html')
 def index():
@@ -17,7 +15,6 @@ def generate_story():
         keywords = request.form.get('keywords')  # Get the form data from POST request
         if keywords:
             story = api.gen_story(keywords)  # Call your story generation function
-    print(story)
     return render_template('storytime.html', story=story)
     
 
