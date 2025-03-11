@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary App</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #f9f9f9;
+            --accent-color: #4a6fa5;
+            --text-color: #333;
+            --light-gray: #e1e5eb;
+            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --border-radius: 8px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .dictionary-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-form {
+            display: flex;
+            margin-bottom: 2rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+        }
+        
+        .search-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        
+        .search-button:hover {
+            background-color: #3a5984;
+        }
+        
+        .error-message {
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #f9ecec;
+            border-radius: var(--border-radius);
+        }
+        
+        .word-header {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 0.5rem;
+        }
+        
+        .word-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-right: 1rem;
+            margin-bottom: 0;
+        }
+        
+        .phonetic {
+            font-style: italic;
+            color: #666;
+        }
+        
+        .audio-button {
+            margin-left: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .audio-button:hover {
+            background-color: #3a5984;
+        }
+        
+        .meaning-section {
+            margin-bottom: 2rem;
+        }
+        
+        .part-of-speech {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            font-style: italic;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .definition-item {
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .definition-text {
+            margin-bottom: 0.5rem;
+        }
+        
+        .example {
+            color: #666;
+            font-style: italic;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .synonyms, .antonyms {
+            margin-top: 0.5rem;
+        }
+        
+        .synonyms span, .antonyms span {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            padding: 0.2rem 0.5rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .source-urls {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        .source-urls a {
+            color: var(--primary-color);
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .source-urls a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dictionary-card">
+            <h1>Dictionary App</h1>
+            
+            <form class="search-form" method="POST">
+                <input type="text" name="word" class="search-input" placeholder="Search for word here" value="{{ searched_word }}" required autofocus>
+                <button type="submit" class="search-button">Search</button>
+            </form>
+            
+            {% if error %}
+            <div class="error-message">{{ error }}</div>
+            {% endif %}
+            
+            {% if word_data %}
+                {% for entry in word_data %}
+                <div class="word-result">
+                    <div class="word-header">
+                        <h2 class="word-title">{{ entry.word }}</h2>
+                        {% if entry.phonetic %}
+                        <span class="phonetic">{{ entry.phonetic }}</span>
+                        {% endif %}
+                        
+                        {% set audio_url = None %}
+                        {% for phonetic in entry.phonetics %}
+                            {% if phonetic.audio and not audio_url %}
+                                {% set audio_url = phonetic.audio %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if audio_url %}
+                        <button class="audio-button" onclick="playAudio('{{ audio_url }}')">
+                            ♪
+                        </button>
+                        <audio id="pronunciation-audio" src=""></audio>
+                        {% endif %}
+                    </div>
+                    
+                    {% for meaning in entry.meanings %}
+                    <div class="meaning-section">
+                        <div class="part-of-speech">{{ meaning.partOfSpeech }}</div>
+                        
+                        {% for definition in meaning.definitions %}
+                        <div class="definition-item">
+                            <div class="definition-text">{{ definition.definition }}</div>
+                            
+                            {% if definition.example %}
+                            <div class="example">"{{ definition.example }}"</div>
+                            {% endif %}
+                            
+                        </div>
+                        {% endfor %}
+                        
+                        {% if meaning.synonyms and meaning.synonyms|length > 0 %}
+                        <div class="synonyms">
+                            <strong>Synonyms:</strong> 
+                            {% for synonym in meaning.synonyms %}
+                            <span>{{ synonym }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if meaning.antonyms and meaning.antonyms|length > 0 %}
+                        <div class="antonyms">
+                            <strong>Antonyms:</strong> 
+                            {% for antonym in meaning.antonyms %}
+                            <span>{{ antonym }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    {% if entry.sourceUrls and entry.sourceUrls|length > 0 %}
+                    <div class="source-urls">
+                        <strong>Source:</strong>
+                        {% for url in entry.sourceUrls %}
+                        <div><a href="{{ url }}" target="_blank">{{ url }}</a></div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        function playAudio(audioUrl) {
+            const audio = document.getElementById('pronunciation-audio');
+            audio.src = audioUrl;
+            audio.play();
+        }
+    </script>
+</body>
+</html>
