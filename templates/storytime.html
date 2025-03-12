@@ -3,27 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Story Maker for Kids</title>
-    <link rel="stylesheet" href="../static/css/storytime.css">
+    <title>Story Maker | AI TaleCraft</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <h1>Story Maker for Kids</h1>
-    </header>
+<body class="bg-[#0a1629] min-h-screen font-['Nunito',sans-serif] text-white">
 
-    <main>
-        <form action="/create_story" method="POST">
-            <label for="keywords">Enter some fun keywords to create your story:</label>
-            <input type="text" name="age" id="age" placeholder="Enter your Age, E.g. 10 years or teenager." >
-            <input type="text" name="characters" id="characters" placeholder="Enter your Characters, E.g. Spiderman or Farm-Animals." >
-            <input type="text" name="scientific_concept" id="keywoscientific_conceptrds" placeholder="Enter scientific_concept, E.g. gravity or Newton laws." >
+    <!-- Wavy Divider -->
+    <div class="bg-white h-6 w-full" style="border-radius: 0 0 100% 100%"></div>
 
-            <button type="submit">Create Story</button>
-        </form>
+    <!-- Back Button -->
+    <div class="container mx-auto px-4 mt-6">
+        <a href="/" class="flex items-center text-[#ff6347] hover:text-[#ff8066] mb-8">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Back to Home
+        </a>
+    </div>
+
+    <main class="container mx-auto px-4 py-4">
+        <div class="max-w-3xl mx-auto bg-[#0c1f3c] rounded-2xl p-8 relative overflow-hidden shadow-xl border border-blue-900">
+            <!-- Space-themed decorative elements -->
+            <div class="absolute -top-12 -right-12 w-24 h-24 rotate-12">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50,5 L63,40 L98,40 L70,62 L80,95 L50,75 L20,95 L30,62 L2,40 L37,40 Z" fill="#FFD700"/>
+                </svg>
+            </div>
+            <div class="absolute top-1/2 -left-6 w-12 h-12">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50,5 L63,40 L98,40 L70,62 L80,95 L50,75 L20,95 L30,62 L2,40 L37,40 Z" fill="white" opacity="0.5"/>
+                </svg>
+            </div>
+            <div class="absolute bottom-8 right-8 w-16 h-16 opacity-30">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#4169E1"/>
+                    <ellipse cx="30" cy="40" rx="10" ry="15" fill="#6A5ACD" transform="rotate(-20 30 40)"/>
+                </svg>
+            </div>
+
+            <h1 class="text-4xl font-bold text-center mb-8 text-[#ff6347]">Story Maker for Kids</h1>
+
+            <form action="/create_story" method="POST" class="space-y-6 relative z-10">
+                <div class="mb-6">
+                    <label for="age" class="block text-xl mb-2 font-semibold">How old are you?</label>
+                    <input type="text" name="age" id="age" placeholder="Enter your age, e.g., 10 years or teenager" 
+                        class="w-full p-4 rounded-xl bg-blue-900/50 border border-blue-700 focus:border-[#ff6347] focus:ring-2 focus:ring-[#ff6347]/50 focus:outline-none placeholder-blue-300 text-white">
+                </div>
+
+                <div class="mb-6">
+                    <label for="characters" class="block text-xl mb-2 font-semibold">Who would you like in your story?</label>
+                    <input type="text" name="characters" id="characters" placeholder="Enter your characters, e.g., Spiderman or Farm Animals" 
+                        class="w-full p-4 rounded-xl bg-blue-900/50 border border-blue-700 focus:border-[#ff6347] focus:ring-2 focus:ring-[#ff6347]/50 focus:outline-none placeholder-blue-300 text-white">
+                </div>
+
+                <div class="mb-6">
+                    <label for="scientific_concept" class="block text-xl mb-2 font-semibold">What science topic would you like to learn about?</label>
+                    <input type="text" name="scientific_concept" id="scientific_concept" placeholder="Enter scientific concept, e.g., gravity or Newton's laws" 
+                        class="w-full p-4 rounded-xl bg-blue-900/50 border border-blue-700 focus:border-[#ff6347] focus:ring-2 focus:ring-[#ff6347]/50 focus:outline-none placeholder-blue-300 text-white">
+                </div>
+
+                <div class="flex justify-center mt-8">
+                    <button type="submit" class="bg-[#ff6347] hover:bg-[#ff8066] text-white text-xl py-3 px-10 rounded-full transform transition hover:scale-105 flex items-center font-bold shadow-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" />
+                        </svg>
+                        Create My Story
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="text-center mt-16 relative">
+            <div class="absolute -left-8 md:left-1/4 top-0 w-16 h-16 opacity-70">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#ff9800"/>
+                    <circle cx="50" cy="50" r="35" fill="#ff5722"/>
+                </svg>
+            </div>
+            <div class="absolute -right-4 md:right-1/4 -top-12 w-20 h-20 opacity-30">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="45" fill="#ADD8E6"/>
+                    <ellipse cx="35" cy="40" rx="15" ry="10" fill="#87CEEB" transform="rotate(-15 35 40)"/>
+                    <ellipse cx="65" cy="60" rx="15" ry="10" fill="#87CEEB" transform="rotate(15 65 60)"/>
+                </svg>
+            </div>
+            <h3 class="text-2xl italic font-medium text-blue-200">Let your imagination soar among the stars! ✨🚀</h3>
+        </div>
     </main>
 
-    <footer>
-        <p>Let your imagination soar! ✨</p>
-    </footer>
+    <!-- Rocket Animation -->
+    <div class="fixed bottom-10 right-10 z-20 animate-bounce">
+        <svg class="w-16 h-16" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50,10 L35,50 L50,40 L65,50 Z" fill="#ff6347"/>
+            <path d="M50,40 L35,50 L50,90 L65,50 Z" fill="#ff9980"/>
+            <circle cx="50" cy="35" r="8" fill="white"/>
+        </svg>
+    </div>
 </body>
 </html>
