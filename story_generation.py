@@ -62,9 +62,9 @@ def Generate_story(age: int|str|None = None,
     if age:
         LLM_PROMPT+=f"The kid is {age}.\n"
     if scientific_concept:
-        LLM_PROMPT+=f"Use Scientific concept such as {scientific_concept if type(scientific_concept)==str else ", ".join(scientific_concept)}.\n"
+        LLM_PROMPT+=f"Use Scientific concept such as {scientific_concept if type(scientific_concept)==str else ', '.join(scientific_concept)}.\n"
     if characters:
-        LLM_PROMPT+=f"Use character such as {characters if type(characters)==str else ", ".join(characters)}.\n"
+        LLM_PROMPT+=f"Use character such as {characters if type(characters)==str else ', '.join(characters)}.\n"
 
     chat_completion = Groq_client.chat.completions.create(
         messages=[

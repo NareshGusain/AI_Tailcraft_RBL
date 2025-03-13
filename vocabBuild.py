@@ -29,6 +29,3 @@ def get_word_definition(word):
             return None, f"Error: {response.status_code}"
     except Exception as e:
         return None, f"Error: {str(e)}"
-
-if __name__ == '__main__':
-    app.run(port= 6969, debug=True)

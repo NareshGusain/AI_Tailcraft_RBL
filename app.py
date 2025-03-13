@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect
 import requests
 from story_generation import Generate_story
 from text_to_speech import text_to_speech_with_timestamp
+from mcq_gen import generate_mcq_from_story
 
 app = Flask(__name__)
 
@@ -65,6 +66,19 @@ def get_word_definition(word):
             return None, f"Error: {response.status_code}"
     except Exception as e:
         return None, f"Error: {str(e)}"
+    
+
+@app.route('/generate-quiz', methods=['GET', 'POST'])
+def generate_quiz():
+    if request.method == 'GET':
+        return render_template('mcq.html')  # Serve mcq.html when accessed via GET
+    
+    story_text = request.form.get('story', '')
+    if not story_text:
+        return jsonify({"error": "No story provided"}), 400
+    
+    quiz_data = generate_mcq_from_story(story_text)
+    return jsonify(quiz_data)
 
 
 if __name__ == '__main__':
