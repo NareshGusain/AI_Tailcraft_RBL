@@ -3,212 +3,147 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dictionary App</title>
+    <title>TaleCraft Dictionary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        space: {
+                            dark: '#001233',
+                            blue: '#0A2463',
+                            accent: '#FF7A48',
+                            yellow: '#FFD56B',
+                            light: '#E9F1F7'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Baloo 2', 'cursive'],
+                        body: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'twinkle': 'twinkle 4s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.5 }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --primary-color: #4a6fa5;
-            --secondary-color: #f9f9f9;
-            --accent-color: #4a6fa5;
-            --text-color: #333;
-            --light-gray: #e1e5eb;
-            --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            --border-radius: 8px;
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&display=swap');
+        
+        .star {
+            position: absolute;
+            opacity: 0.7;
+            z-index: 0;
         }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f7fa;
-            color: var(--text-color);
-            line-height: 1.6;
+        .star-1 {
+            top: 10%;
+            left: 5%;
         }
         
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        .star-2 {
+            top: 15%;
+            right: 10%;
         }
         
-        .dictionary-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 2rem;
-            margin-bottom: 2rem;
+        .star-3 {
+            bottom: 20%;
+            left: 8%;
         }
         
-        h1 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 1.5rem;
+        .star-4 {
+            bottom: 10%;
+            right: 5%;
         }
         
-        .search-form {
-            display: flex;
-            margin-bottom: 2rem;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            font-size: 1rem;
-            border: 2px solid var(--light-gray);
-            border-radius: var(--border-radius) 0 0 var(--border-radius);
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        
-        .search-input:focus {
-            border-color: var(--primary-color);
-        }
-        
-        .search-button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0 1.5rem;
-            border-radius: 0 var(--border-radius) var(--border-radius) 0;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-weight: 600;
-        }
-        
-        .search-button:hover {
-            background-color: #3a5984;
-        }
-        
-        .error-message {
-            color: #d9534f;
-            text-align: center;
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            background-color: #f9ecec;
-            border-radius: var(--border-radius);
-        }
-        
-        .word-header {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--light-gray);
-            padding-bottom: 0.5rem;
-        }
-        
-        .word-title {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-right: 1rem;
-            margin-bottom: 0;
-        }
-        
-        .phonetic {
-            font-style: italic;
-            color: #666;
-        }
-        
-        .audio-button {
-            margin-left: 1rem;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .audio-button:hover {
-            background-color: #3a5984;
-        }
-        
-        .meaning-section {
-            margin-bottom: 2rem;
-        }
-        
-        .part-of-speech {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            font-style: italic;
-            margin-top: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .definition-item {
-            margin-bottom: 1rem;
-            padding-left: 1rem;
-            border-left: 3px solid var(--accent-color);
-        }
-        
-        .definition-text {
-            margin-bottom: 0.5rem;
-        }
-        
-        .example {
-            color: #666;
-            font-style: italic;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .synonyms, .antonyms {
-            margin-top: 0.5rem;
-        }
-        
-        .synonyms span, .antonyms span {
-            display: inline-block;
-            background-color: var(--secondary-color);
-            padding: 0.2rem 0.5rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .source-urls {
-            margin-top: 1.5rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--light-gray);
-            font-size: 0.9rem;
-        }
-        
-        .source-urls a {
-            color: var(--primary-color);
-            text-decoration: none;
-            word-break: break-all;
-        }
-        
-        .source-urls a:hover {
-            text-decoration: underline;
+        .rocket-animate {
+            animation: float 6s ease-in-out infinite;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="dictionary-card">
-            <h1>Dictionary App</h1>
-            
-            <form class="search-form" method="POST">
-                <input type="text" name="word" class="search-input" placeholder="Search for word here" value="{{ searched_word }}" required autofocus>
-                <button type="submit" class="search-button">Search</button>
-            </form>
+<body class="bg-space-dark text-space-light font-body relative min-h-screen overflow-x-hidden">
+    <!-- Decorative stars -->
+    <div class="star star-1 animate-twinkle">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFD56B"/>
+        </svg>
+    </div>
+    <div class="star star-2 animate-twinkle" style="animation-delay: 1s;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFD56B"/>
+        </svg>
+    </div>
+    <div class="star star-3 animate-twinkle" style="animation-delay: 2s;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFD56B"/>
+        </svg>
+    </div>
+    <div class="star star-4 animate-twinkle" style="animation-delay: 3s;">
+        <svg width="25" height="25" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FFD56B"/>
+        </svg>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+        <header class="flex justify-center items-center mb-8">
+            <a href="/" class="text-center">
+                <h1 class="text-4xl md:text-5xl font-display font-bold text-space-accent mb-2">TaleCraft Dictionary</h1>
+                <p class="text-space-light text-lg">Explore new words from your space adventures!</p>
+            </a>
+        </header>
+
+        <div class="bg-space-blue bg-opacity-70 rounded-xl backdrop-filter backdrop-blur-md p-6 shadow-lg border border-space-light border-opacity-10 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="rocket-animate">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.5C16.5 2.5 20 6 20 10.5C20 15 16.5 18.5 12 18.5C7.5 18.5 4 15 4 10.5C4 6 7.5 2.5 12 2.5Z" fill="#FF7A48"/>
+                        <path d="M12 18.5V22.5" stroke="#E9F1F7" stroke-width="2"/>
+                        <path d="M8 14.5L4 18.5" stroke="#E9F1F7" stroke-width="2"/>
+                        <path d="M16 14.5L20 18.5" stroke="#E9F1F7" stroke-width="2"/>
+                    </svg>
+                </div>
+                <form class="search-form flex-grow mx-4 relative" method="POST">
+                    <input type="text" name="word" class="w-full py-3 px-4 bg-space-light bg-opacity-10 border border-space-light border-opacity-30 rounded-lg text-space-light placeholder-space-light placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-space-accent" placeholder="Search for a word here..." value="{{ searched_word }}" required autofocus>
+                    <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-space-accent text-white px-4 py-2 rounded-lg hover:bg-opacity-80 transition-all duration-300 font-bold">
+                        Search
+                    </button>
+                </form>
+                <div class="rocket-animate" style="animation-delay: 2s;">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.5C16.5 2.5 20 6 20 10.5C20 15 16.5 18.5 12 18.5C7.5 18.5 4 15 4 10.5C4 6 7.5 2.5 12 2.5Z" fill="#FFD56B"/>
+                        <path d="M12 18.5V22.5" stroke="#E9F1F7" stroke-width="2"/>
+                        <path d="M8 14.5L4 18.5" stroke="#E9F1F7" stroke-width="2"/>
+                        <path d="M16 14.5L20 18.5" stroke="#E9F1F7" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
             
             {% if error %}
-            <div class="error-message">{{ error }}</div>
+            <div class="bg-red-500 bg-opacity-20 border border-red-500 border-opacity-30 text-red-100 p-4 rounded-lg mb-6 text-center">
+                {{ error }}
+            </div>
             {% endif %}
             
             {% if word_data %}
                 {% for entry in word_data %}
-                <div class="word-result">
-                    <div class="word-header">
-                        <h2 class="word-title">{{ entry.word }}</h2>
+                <div class="word-result mb-8">
+                    <div class="flex items-baseline border-b border-space-light border-opacity-20 pb-3 mb-4">
+                        <h2 class="text-3xl font-display font-bold text-space-accent mr-3">{{ entry.word }}</h2>
                         {% if entry.phonetic %}
-                        <span class="phonetic">{{ entry.phonetic }}</span>
+                        <span class="text-space-light text-opacity-70 italic mr-3">{{ entry.phonetic }}</span>
                         {% endif %}
                         
                         {% set audio_url = None %}
@@ -219,53 +154,58 @@
                         {% endfor %}
                         
                         {% if audio_url %}
-                        <button class="audio-button" onclick="playAudio('{{ audio_url }}')">
-                            ♪
+                        <button class="bg-space-accent rounded-full w-8 h-8 flex items-center justify-center hover:bg-opacity-80 transition-all duration-300" onclick="playAudio('{{ audio_url }}')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 5V19H10L18 19V5L10 5H5Z" fill="#E9F1F7"/>
+                            </svg>
                         </button>
                         <audio id="pronunciation-audio" src=""></audio>
                         {% endif %}
                     </div>
                     
                     {% for meaning in entry.meanings %}
-                    <div class="meaning-section">
-                        <div class="part-of-speech">{{ meaning.partOfSpeech }}</div>
+                    <div class="bg-space-blue bg-opacity-40 rounded-lg p-4 mb-6">
+                        <div class="text-space-yellow font-display font-bold text-lg italic mb-3">{{ meaning.partOfSpeech }}</div>
                         
                         {% for definition in meaning.definitions %}
-                        <div class="definition-item">
-                            <div class="definition-text">{{ definition.definition }}</div>
+                        <div class="border-l-4 border-space-accent pl-4 mb-4">
+                            <div class="mb-2">{{ definition.definition }}</div>
                             
                             {% if definition.example %}
-                            <div class="example">"{{ definition.example }}"</div>
+                            <div class="text-space-light text-opacity-70 italic mb-2">"{{ definition.example }}"</div>
                             {% endif %}
-                            
                         </div>
                         {% endfor %}
                         
                         {% if meaning.synonyms and meaning.synonyms|length > 0 %}
-                        <div class="synonyms">
-                            <strong>Synonyms:</strong> 
-                            {% for synonym in meaning.synonyms %}
-                            <span>{{ synonym }}</span>
-                            {% endfor %}
+                        <div class="mb-3">
+                            <strong class="text-space-yellow">Synonyms:</strong> 
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                {% for synonym in meaning.synonyms %}
+                                <span class="bg-space-light bg-opacity-10 px-2 py-1 rounded text-sm">{{ synonym }}</span>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% endif %}
                         
                         {% if meaning.antonyms and meaning.antonyms|length > 0 %}
-                        <div class="antonyms">
-                            <strong>Antonyms:</strong> 
-                            {% for antonym in meaning.antonyms %}
-                            <span>{{ antonym }}</span>
-                            {% endfor %}
+                        <div class="mb-3">
+                            <strong class="text-space-yellow">Antonyms:</strong>
+                            <div class="flex flex-wrap gap-2 mt-1">
+                                {% for antonym in meaning.antonyms %}
+                                <span class="bg-space-light bg-opacity-10 px-2 py-1 rounded text-sm">{{ antonym }}</span>
+                                {% endfor %}
+                            </div>
                         </div>
                         {% endif %}
                     </div>
                     {% endfor %}
                     
                     {% if entry.sourceUrls and entry.sourceUrls|length > 0 %}
-                    <div class="source-urls">
-                        <strong>Source:</strong>
+                    <div class="border-t border-space-light border-opacity-20 pt-4 text-sm">
+                        <strong class="text-space-yellow">Source:</strong>
                         {% for url in entry.sourceUrls %}
-                        <div><a href="{{ url }}" target="_blank">{{ url }}</a></div>
+                        <div class="mt-1"><a href="{{ url }}" target="_blank" class="text-space-accent hover:underline">{{ url }}</a></div>
                         {% endfor %}
                     </div>
                     {% endif %}
@@ -273,6 +213,10 @@
                 {% endfor %}
             {% endif %}
         </div>
+
+        <footer class="text-center mt-8 text-space-light text-opacity-70">
+            <a href="/" class="text-space-accent hover:underline">Back to TaleCraft Home</a>
+        </footer>
     </div>
     
     <script>
