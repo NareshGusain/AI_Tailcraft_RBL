@@ -35,25 +35,6 @@
         </a>
         
         
-        <div class="mb-8 relative">
-            <h2 class="text-2xl font-bold mb-4 text-yellow-200">Enter your story:</h2>
-            <textarea id="story-input" placeholder="Paste your story here to create a quiz for kids!" class="w-full min-h-48 rounded-xl p-4 text-gray-800 border-4 border-purple-400 focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 bg-white/90 placeholder-gray-500 text-lg"></textarea>
-            
-            <div class="flex justify-center mt-4">
-                <button id="generate-quiz" class="bg-space-accent hover:bg-orange-500 text-white font-bold py-3 px-8 rounded-full transform transition hover:scale-105 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    Generate Quiz
-                </button>
-            </div>
-            
-            <div id="loading" class="hidden text-center mt-6">
-                <p class="text-xl text-yellow-200 mb-3">Creating your quiz... Please wait!</p>
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-yellow-300 border-r-4 border-yellow-300 border-b-4 border-transparent"></div>
-            </div>
-        </div>
-        
         <!-- Little space decoration elements -->
         <div class="absolute top-10 right-10 opacity-30 hidden md:block">
             <div class="h-8 w-8 rounded-full bg-yellow-200 shadow-lg shadow-yellow-200/50"></div>
@@ -82,9 +63,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const storyInput = document.getElementById('story-input');
-            const generateQuizBtn = document.getElementById('generate-quiz');
-            const loading = document.getElementById('loading');
             const quizSection = document.getElementById('quiz-section');
             const questionsContainer = document.getElementById('questions-container');
             const submitQuizBtn = document.getElementById('submit-quiz');
@@ -92,27 +70,21 @@
             
             let quizData = null;
             
-            generateQuizBtn.addEventListener('click', function() {
-                const story = storyInput.value.trim();
-                if (!story) {
-                    alert('Please enter a story first!');
-                    return;
-                }
+
                 
-                loading.style.display = 'flex';
-                loading.classList.remove('hidden');
                 
                 // Send the story to the server
-                fetch('/generate-quiz', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `story=${encodeURIComponent(story)}`
+                fetch("/get_quiz/{{story_uuid}}", { 
+                    method: 'GET'
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    loading.style.display = 'none';
+
                     if (data.error) {
                         alert('Error generating quiz: ' + data.error);
                         return;
@@ -121,14 +93,14 @@
                     quizData = data;
                     displayQuiz(quizData);
                     quizSection.classList.remove('hidden');
-                    // Scroll to quiz section
+                    // Smoothly scroll to the quiz section
                     quizSection.scrollIntoView({ behavior: 'smooth' });
                 })
                 .catch(error => {
-                    loading.style.display = 'none';
+
                     alert('Error: ' + error.message);
                 });
-            });
+
             
             function displayQuiz(quizData) {
                 questionsContainer.innerHTML = '';

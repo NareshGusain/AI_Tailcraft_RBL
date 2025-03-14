@@ -4,13 +4,16 @@ import json
 import random
 import re
 import os
+from utils.utility import get_story
 
 app = Flask(__name__)
 
 # Initialize Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY_AMAN"))
 
-def generate_mcq_from_story(story_text):
+def generate_mcq_from_story(story_uuid):
+
+    story_text = get_story(story_uuid)
     # Define the system prompt to generate MCQs
     system_prompt = """
     You are an educational quiz creator for children. Generate 4 multiple-choice questions based on the story provided.
@@ -112,7 +115,7 @@ def generate_mcq_from_story(story_text):
                 
                 # Update the correct_answer index
                 question["correct_index"] = question["options"].index(correct_clean)
-                
+                 
             return quiz_data
         else:
             print("Could not find JSON pattern in response")

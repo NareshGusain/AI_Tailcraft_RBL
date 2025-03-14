@@ -12,41 +12,40 @@ if not GROQ_API_KEY:
 Groq_client = Groq(api_key=GROQ_API_KEY,)
 
 LLM_INSTRUCTIONS = lambda: f"""
-LLM Instruction: Crafting Engaging, Educational Stories for Children
-Objective: Generate short, engaging stories featuring popular characters and superheroes that illustrate simple scientific ideas. The stories must be fun and age-appropriate for children, scientifically accurate, and suitable for direct conversion to speech without requiring extra post-processing.
+LLM Instruction: Craft Engaging, Educational Stories for Children
+Objective: Generate a captivating, age-appropriate story for children aged 5-10 that illustrates one clear scientific concept. The story should be fun, engaging, and scientifically accurate, with language simple enough for direct text-to-speech conversion. Do not include any extraneous text, greetings, or closing remarks.
 
 Guidelines:
 
 Audience:
--The audience is children between 5-10 years old.
--Keep the language simple and sentences concise.
--Ensure the tone is friendly, fun, and exciting.
+- Target audience: children between 5-15 years old.
+- Use simple vocabulary and short, clear sentences.
+- Maintain a friendly, fun, and enthusiastic tone.
 
 Structure:
--Introduction: Start with an attention-grabbing opening that introduces the popular characters or superheroes.
--Plot: Focus the plot on one clear scientific concept, such as gravity, electricity, or the water cycle unless specified some concepts in command. Ensure the concept is explained in an easy-to-understand way through the actions or dialogues of the characters.
--Conclusion: End the story with a positive message or lesson, reinforcing the scientific concept while wrapping up the plot.
+- Introduction: Begin with a compelling opening that introduces one or two popular characters or superheroes.
+- Plot: Focus the narrative on one clear scientific concept (e.g., gravity, electricity, water cycle). Illustrate this concept through the characters' actions or dialogue in a straightforward manner.
+- Conclusion: End with a positive message that reinforces the scientific concept, keeping the narrative focused and linear.
 
 Character Interaction:
--Characters should interact in a way that drives the scientific lesson forward.
--Avoid introducing too many characters. Focus on a maximum of 2-3 well-known characters to maintain clarity.
--Ensure their dialogues are engaging and explain the scientific ideas in a conversational manner.
+- Limit characters to a maximum of 2-3 to ensure clarity.
+- Characters should interact naturally and drive the scientific lesson through engaging dialogue.
+- Avoid overly complex interactions; keep the conversation simple and relatable.
 
 Scientific Accuracy:
--Present the scientific information correctly, without oversimplifying or making it confusing.
--Explain complex ideas using analogies that children can easily understand.
+- Present the scientific concept accurately without oversimplification.
+- Use relatable analogies or examples that children can easily understand.
 
 Length:
--The story should be around 300-500 words.
--It must be concise enough for an audio playtime of approximately 3-5 minutes.
+- The story should be approximately 300-500 words (suitable for an audio playtime of around 3-5 minutes).
 
 Text-to-Speech Considerations:
--Ensure there are no stray characters, special symbols, or unnecessary dialogue that could confuse the text-to-speech model.
--Do not include complex punctuation that could interfere with natural speech flow.
--Avoid producing multiple storylines or tangents. Stick to one clear, linear story.
+- Avoid any stray characters, symbols, or excessive punctuation that could disrupt the natural flow in text-to-speech conversion.
+- Do not include any extra text such as greetings, introductions, or conclusions like "Here's your story" or "The End."
+- The output must consist solely of the story narrative.
 
 No Extra Output:
--The final output must end after the story concludes. Do not produce any additional text (such as “The End” or commentary) as the output will go directly into the text-to-speech system for audio narration.
+- The final output must end immediately after the story concludes—no additional text or commentary is allowed.
 """
 
 def Generate_story(age: int|str|None = None, 
@@ -56,16 +55,24 @@ def Generate_story(age: int|str|None = None,
     Using "llama3-8b-8192"
     """
     LLM_PROMPT = """
-    -The final output must end after the story concludes. Do not produce any additional text (such as “The End” or commentary) as the output will go directly into the text-to-speech system for audio narration.
-    -Keep the terms in the story simple and use only word which are age comprehendable and appropriate.
+    - Output only the story narrative. Do not include any headers, introductions, or closing statements.
+    - Use clear, simple language that is age-appropriate for children (5-15 years old).
+    - Ensure that the story is engaging, educational, and strictly about the narrative.
     """
     if age:
-        LLM_PROMPT+=f"The kid is {age}.\n"
+        LLM_PROMPT += f"The kid is {age} years old.\n"
     if scientific_concept:
-        LLM_PROMPT+=f"Use Scientific concept such as {scientific_concept if type(scientific_concept)==str else ', '.join(scientific_concept)}.\n"
+        if isinstance(scientific_concept, str):
+            LLM_PROMPT += f"Focus on the scientific concept: {scientific_concept}.\n"
+        else:
+            LLM_PROMPT += f"Focus on scientific concepts such as {', '.join(scientific_concept)}.\n"
     if characters:
-        LLM_PROMPT+=f"Use character such as {characters if type(characters)==str else ', '.join(characters)}.\n"
-
+        if isinstance(characters, str):
+            LLM_PROMPT += f"Include the character: {characters}.\n"
+        else:
+            LLM_PROMPT += f"Include characters such as {', '.join(characters)}.\n"
+            
+            
     chat_completion = Groq_client.chat.completions.create(
         messages=[
             {
