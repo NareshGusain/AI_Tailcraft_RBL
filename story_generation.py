@@ -9,7 +9,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 if not GROQ_API_KEY:
     raise ValueError("GROQ_API_KEY environment variable not set.")
 
-Groq_client = Groq(api_key=GROQ_API_KEY,)
+Groq_client = Groq(api_key=GROQ_API_KEY)
 
 LLM_INSTRUCTIONS = lambda: f"""
 LLM Instruction: Crafting Engaging, Educational Stories for Children
