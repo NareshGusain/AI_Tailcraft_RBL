@@ -1,6 +1,6 @@
 Flask==2.3.2
 python-dotenv==1.0.0
-# groq==0.4.1
-groq==0.3.0 # use this for deploying on render
+groq==0.4.1
+# groq==0.3.0 # use this for deploying on render
 requests==2.31.0
 httpx==0.24.1 # use this for deploying on render
