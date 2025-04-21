@@ -22,6 +22,9 @@ def need_cookies(request) -> bool:
     
     return True
 
+def get_user_email(request) -> str:
+    return request.cookies.get('email')
+
 def get_story(story_uuid):
     try:
         with open(f"static/story/{story_uuid}.txt", 'r') as file:

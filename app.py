@@ -1,15 +1,18 @@
 from flask import Flask, render_template, send_file, request, jsonify, redirect, flash, Response, Request, make_response
-from fastapi.responses import FileResponse
+# from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import requests, os
 from dotenv import load_dotenv
 from story_generation import Generate_story
 from text_to_speech import text_to_speech_with_timestamp
 from mcq_gen import generate_mcq_from_story
-from utils.db import check_login
-from utils.utility import cookie_hash, need_cookies, get_story, json_to_quiz, quiz_to_json, create_txt_file
+from utils.db import check_login, save_story, upload_story_to_bucket, check_file_in_bucket_and_download, get_story_files, get_story_history
+from utils.utility import cookie_hash, need_cookies, get_story, json_to_quiz, quiz_to_json, create_txt_file, get_user_email
 from story_cover_generation import generate_cover_description, generate_story_cover
+from flask import redirect, request, make_response
 load_dotenv()
+
+# templates = Jinja2Templates(directory="templates")
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FASTAPI_KEY")
@@ -37,6 +40,15 @@ def login():
             return redirect('/login')
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    response = make_response(redirect('/login'))
+    # Delete cookies by setting them with an expired date
+    response.set_cookie('email', '', expires=0)
+    response.set_cookie('auth_code', '', expires=0)
+    return response
+
+
 @app.route('/storytime', methods=['GET', 'POST'])
 def generate_story():
     if need_cookies(request):
@@ -54,8 +66,10 @@ def create_story():
             characters = request.form.get('characters', "")  
             scientific_concept = request.form.get('scientific_concept', "")
             story_script = Generate_story(age=age, characters=characters, scientific_concept=scientific_concept)
-            story_uuid = text_to_speech_with_timestamp(text=story_script[:200])
+            story_uuid = text_to_speech_with_timestamp(text=story_script[:1000])
             create_txt_file(text=story_script, story_uuid=story_uuid)
+            save_story(age_info=age, character_info=characters, scientific_info=scientific_concept, email = get_user_email(request), uuid = story_uuid)
+            upload_story_to_bucket(uuid=story_uuid, file_types = ['.json', '.mp3', '.txt'])
             return redirect(f"player/{story_uuid}")
         else:
             return "Required POST request."
@@ -65,6 +79,7 @@ def story_player(story_uuid):
     if need_cookies(request):
         return render_template('index.html')
     else:
+        get_story_files(uuid=story_uuid)
         return render_template('player.html', story_uuid=story_uuid)
 
 @app.get("/image/<story_uuid>")
@@ -72,15 +87,29 @@ def get_image(story_uuid):
     image_path = Path(f"static/story/{story_uuid}.png")
     if image_path.is_file():
         return send_file(image_path, mimetype='image/gif')
+    elif check_file_in_bucket_and_download(story_uuid+".png"):
+        return send_file(image_path, mimetype='image/gif')
     else:
         try:
             story_text = get_story(story_uuid)
             cover_description = generate_cover_description(story_text=story_text)
             generate_story_cover(cover_description=cover_description, story_uuid=story_uuid)
+            upload_story_to_bucket(uuid=story_uuid, file_types=[".png"])
             return send_file(image_path, mimetype='image/gif')
         except:
             return send_file(f"static/story/default.jpg", mimetype='image/gif')
 
+    
+@app.get("/profile")
+def profile():
+    if need_cookies(request):
+        return redirect('/login')
+    else:
+        context =  {"request": request,
+                    "email": request.cookies.get('email'),
+                    "stories": get_story_history(request.cookies.get('email'))}
+        # print("-------"+ context.get('email'))
+        return render_template("profile.html", context=context)
 
 @app.route('/about')
 def about():
